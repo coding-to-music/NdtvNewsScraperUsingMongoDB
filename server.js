@@ -11,6 +11,8 @@ var cheerio = require("cheerio");
 //Parse incoming request bodies in a middleware before your handlers, available under the req.body property.
 var bodyParser = require("body-parser");
 
+require('dotenv/config');
+
 var exphbs = require("express-handlebars");
 // const expressHandlebars=require('express-handlebars');
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access');
@@ -37,9 +39,14 @@ app.use(express.static("public"));
 //Let us have our mongodb database name to be ndtvnews
 //By using Promise, Mongoose async operations, like .save() and queries, return thenables. 
 mongoose.Promise = Promise; 
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/ndtvnews";
+// var MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://tmc:tmc@cluster0.zadqe.mongodb.net/NDTV-News-Scraper?retryWrites=true&w=majority";
+// var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/ndtvnews";
+var MONGODB_URI = process.env.MONGODB_URI ;
 // mongoose.connect(MONGODB_URI);
 // mongoose.connect("mongodb://localhost:27017/YOURDB", { useNewUrlParser: true, useUnifiedTopology: true });
+
+console.log("MONGODB_URI", MONGODB_URI);
+
 mongoose.connect(MONGODB_URI, { 
   useNewUrlParser: true, 
   useUnifiedTopology: true, 
@@ -100,8 +107,8 @@ app.get("/scrape", function(req, res) {
         console.log("title",title);
         var link = $(element).find("a").attr("href");
         console.log("link",link);
-        link = link + " " + link
-        console.log("new link",link);
+        // link = link + " " + link
+        // console.log("new link",link);
 
       // // trim() removes whitespace because the items return \n and \t before and after the text
       // var title = $(element).find("a").text().trim();
