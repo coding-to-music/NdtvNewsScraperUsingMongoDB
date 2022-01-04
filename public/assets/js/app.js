@@ -49,7 +49,7 @@ $(document).ready(function() {
     $("#note-modal-title").text("Notes for article: " + data.title);
     var noteItem;
     var noteDeleteBtn;
-    console.log("data notes legnth ", data.notes.length)
+    console.log("data notes length ", data.notes.length)
     for (var i = 0; i < data.notes.length; i++) {
       noteItem = $("<li>").text(data.notes[i].body);
       noteItem.addClass("note-item-list");

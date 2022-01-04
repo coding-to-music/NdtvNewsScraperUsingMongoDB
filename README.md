@@ -42,3 +42,5 @@ Visual Studio Code is the best IDE to code Node JS and Mongoose related projects
 - npm, including [express](https://www.npmjs.com/package/express) and [body-parser](https://www.npmjs.com/package/body-parser) packages.
 - [cheerio](https://cheerio.js.org/) for scraping the website
 
+
+![Adding a note](https://github.com/coding-to-music/NdtvNewsScraperUsingMongoDB/blob/main/public/assets/img/add-note-screenshot.png?raw=true)

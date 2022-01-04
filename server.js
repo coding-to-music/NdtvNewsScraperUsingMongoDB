@@ -10,7 +10,11 @@ var cheerio = require("cheerio");
 //Node.js body parsing middleware.
 //Parse incoming request bodies in a middleware before your handlers, available under the req.body property.
 var bodyParser = require("body-parser");
+
 var exphbs = require("express-handlebars");
+// const expressHandlebars=require('express-handlebars');
+const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access');
+
 //WE can explicitly set the port number provided no other instances running on that port
 var PORT = process.env.PORT || 3000;
 
@@ -34,10 +38,24 @@ app.use(express.static("public"));
 //By using Promise, Mongoose async operations, like .save() and queries, return thenables. 
 mongoose.Promise = Promise; 
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/ndtvnews";
-mongoose.connect(MONGODB_URI);
+// mongoose.connect(MONGODB_URI);
+// mongoose.connect("mongodb://localhost:27017/YOURDB", { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(MONGODB_URI, { 
+  useNewUrlParser: true, 
+  useUnifiedTopology: true, 
+  useCreateIndex: true
+});
+
+// app.engine('.hbs', expressHandlebars({ 
+//   handlebars: allowInsecurePrototypeAccess(Handlebars) ,
+//   defaultLayout: 'layout', 
+//   extname: '.hbs'}
+// ));
 
 // use handlebars
 app.engine("handlebars", exphbs({
+  // handlebars: allowInsecurePrototypeAccess(handlebars) ,
+  allowProtoMethodsByDefault: true,
   defaultLayout: "main"
 }));
 app.set("view engine", "handlebars");
@@ -55,6 +73,7 @@ app.get("/", function(req, res) {
 
     function(error, dbArticle) {
       if (error) {
+        console.log("error error error");
         console.log(error);
       } else {
         //We are passing the contents to index.handlebars
@@ -66,7 +85,7 @@ app.get("/", function(req, res) {
 })
 
 // use cheerio to scrape stories from NDTV and store them
-//We need to do this on one time basis each day
+//We need to do this on a one-time basis each day
 app.get("/scrape", function(req, res) {
     request("https://ndtv.com/", function(error, response, html) {
     // Load the html body from request into cheerio
@@ -74,11 +93,28 @@ app.get("/scrape", function(req, res) {
     //By inspecting the web page we know how to get the title i.e. headlines of news.
     //From view page source also we can able to get it. It differs in each web page
     $("h2").each(function(i, element) {
+
+      if (i < 3) {
       // trim() removes whitespace because the items return \n and \t before and after the text
-      var title = $(element).find("a").text().trim();
-      console.log("title",title);
-      var link = $(element).find("a").attr("href");
-      console.log("link",link);
+        var title = $(element).find("a").text().trim();
+        console.log("title",title);
+        var link = $(element).find("a").attr("href");
+        console.log("link",link);
+        link = link + " " + link
+        console.log("new link",link);
+
+      // // trim() removes whitespace because the items return \n and \t before and after the text
+      // var title = $(element).find("a").text().trim();
+      // console.log("title",title);
+      // var link = $(element).find("a").attr("href");
+      // console.log("link",link);
+
+       if (title && link ) {
+        console.log(i, "We should be calling db.Article.create");
+        } else {
+        console.log(i, "NOT calling db.Article.create");
+        }
+      }
 
       // if these are present in the scraped data, create an article in the database collection
        if (title && link ) {
@@ -95,9 +131,9 @@ app.get("/scrape", function(req, res) {
               console.log(inserted);
             }
           });
-        // if there are 10 articles, then return the callback to the frontend
+        // if there are 5 articles, then return the callback to the frontend
         console.log(i);
-        if (i === 10) {
+        if (i === 5) {
           return res.sendStatus(200);
         }
       } 
