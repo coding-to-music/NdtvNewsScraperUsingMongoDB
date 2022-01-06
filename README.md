@@ -32,6 +32,7 @@ Visual Studio Code is the best IDE to code Node JS and Mongoose related projects
 3. To start the app, type `node server.js` and open your browser to `localhost:3000`.
 4. In case if 3000 port is used by some other process in your system, feel free to change the port number in "server.js"
 
+
 set the file `.env` with connection details for MongoDB Atlas (get from the Atlas dashboard)
 
 ```java
