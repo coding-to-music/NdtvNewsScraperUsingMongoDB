@@ -65,6 +65,7 @@ mongoose.connect(MONGODB_URI, {
 app.engine("handlebars", exphbs({
   // handlebars: allowInsecurePrototypeAccess(handlebars) ,
   allowProtoMethodsByDefault: true,
+  allowedProtoMethods: true,
   defaultLayout: "main"
 }));
 app.set("view engine", "handlebars");
@@ -75,7 +76,9 @@ var db = require("./models");
 // We need to filter out NdtvArticles from the database that are not saved
 // It will be called on startup of url
 app.get("/", function(req, res) {
-  
+
+  console.log("app.get / about to call db.Article.find");
+
   db.Article.find({
       saved: false
     },
@@ -85,7 +88,8 @@ app.get("/", function(req, res) {
         console.log("error error error");
         console.log(error);
       } else {
-        //We are passing the contents to index.handlebars
+        // We are passing the contents to index.handlebars
+        console.log("We are passing the contents to index.handlebars");
         res.render("index", {
           articles: dbArticle
         });
@@ -153,10 +157,12 @@ app.get("/scrape", function(req, res) {
 // route for retrieving all the saved articles. User has the option to save the article.
 //Once it is saved, "saved" column in the collection is set to true. Below routine helps to find the articles that are saved
 app.get("/saved", function(req, res) {
+  console.log("/saved");
   db.Article.find({
       saved: true
     })
     .then(function(dbArticle) {
+      console.log("/saved .then(function(dbArticle)");
       // if successful, then render with the handlebars saved page
       // this time saved.handlebars is called and that page is rendered
       res.render("saved", {
@@ -164,6 +170,7 @@ app.get("/saved", function(req, res) {
       })
     })
     .catch(function(err) {
+      console.log("/saved .catch(function(err)");
       // If an error occurs, send the error back to the client
       res.json(err);
     })
