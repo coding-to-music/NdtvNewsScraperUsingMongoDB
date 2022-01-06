@@ -7,6 +7,8 @@ var mongoose = require("mongoose");
 var request = require("request");
 //Cheerio parses markup and provides an API for traversing/manipulating the resulting data structure
 var cheerio = require("cheerio");
+const Handlebars = require('handlebars')
+// const hbs = require('express-handlebars');
 //Node.js body parsing middleware.
 //Parse incoming request bodies in a middleware before your handlers, available under the req.body property.
 var bodyParser = require("body-parser");
@@ -15,7 +17,15 @@ require('dotenv/config');
 
 var exphbs = require("express-handlebars");
 // const expressHandlebars=require('express-handlebars');
+
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access');
+
+// const hbs = exphbs.create({ 
+//   defaultLayout: 'main',  
+//   extname: 'hbs', 
+//   handlebars: allowInsecurePrototypeAccess(Handlebars) 
+//   }
+// );
 
 //WE can explicitly set the port number provided no other instances running on that port
 var PORT = process.env.PORT || 3000;
@@ -25,7 +35,7 @@ var app = express();
 
 // use body-parser for handling form submissions
 app.use(bodyParser.urlencoded({
-  extended: false
+  extended: true
 }));
 // We are getting the output in the form of application/json
 app.use(bodyParser.json({
@@ -61,13 +71,32 @@ mongoose.connect(MONGODB_URI, {
 //   extname: '.hbs'}
 // ));
 
-// use handlebars
-app.engine("handlebars", exphbs({
-  // handlebars: allowInsecurePrototypeAccess(handlebars) ,
-  allowProtoMethodsByDefault: true,
-  allowedProtoMethods: true,
-  defaultLayout: "main"
+// app.set('views', path.join(__dirname, '/views/'))
+// app.engine('hbs', hbs({ 
+//   extname: 'hbs', 
+//   defaultLayout: 'mainLayout', 
+//   layoutsDir: __dirname + '/views/layouts/', 
+//   handlebars: allowInsecurePrototypeAccess(Handlebars) 
+// }))
+
+// app.set('view engine', 'hbs')
+
+
+app.engine('.hbs', exphbs({
+  defaultLayout: 'main',
+  extname: '.hbs',
+  // layoutsDir: path.join(__dirname, 'views/layouts')
 }));
+app.set('view engine', '.hbs');
+// app.set('views', path.join(__dirname, 'views'));
+
+// use handlebars
+// app.engine("handlebars", exphbs({
+//   // handlebars: allowInsecurePrototypeAccess(handlebars) ,
+//   allowProtoMethodsByDefault: true,
+//   allowedProtoMethods: true,
+//   defaultLayout: "main"
+// }));
 app.set("view engine", "handlebars");
 
 // Hook mongojs configuration to the db variable
@@ -89,7 +118,8 @@ app.get("/", function(req, res) {
         console.log(error);
       } else {
         // We are passing the contents to index.handlebars
-        console.log("We are passing the contents to index.handlebars");
+        console.log("No Error so pass the contents to index.handlebars");
+        console.log("dbArticle", dbArticle);
         res.render("index", {
           articles: dbArticle
         });
@@ -245,5 +275,5 @@ app.get("/notes/:id", function(req, res) {
 
 // listen for the routes
 app.listen(PORT, function() {
-  console.log("App is running");
+  console.log("App is running on port", PORT);
 });
