@@ -49,7 +49,7 @@ app.use(express.static("public"));
 //Let us have our mongodb database name to be ndtvnews
 //By using Promise, Mongoose async operations, like .save() and queries, return thenables. 
 mongoose.Promise = Promise; 
-// var MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://tmc:tmc@cluster0.zadqe.mongodb.net/NDTV-News-Scraper?retryWrites=true&w=majority";
+
 // var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/ndtvnews";
 var MONGODB_URI = process.env.MONGODB_URI ;
 // mongoose.connect(MONGODB_URI);
